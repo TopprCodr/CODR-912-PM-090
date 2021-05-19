@@ -69,11 +69,11 @@ else if (gameState === "end") {
   console.log("gameover");
   textSize(35)
   fill("yellow");
-  text("SURVIVED FOR:  " + playerLife, width - 800, 250);
+  text("SURVIVED FOR:  " + playerLife "points", width - 800, 250);
 
   textSize(40)
   fill("red");
-  text("GameOver", width - 700, 150);
+  text("Game Over", width - 700, 150);
 
 }
     ground.display();
