@@ -8,12 +8,13 @@ var particles=[],stones=[];
 var player1,ground;
 var playerLife = 0;
 var backgroundImg,backgroundImg2;
-var gameState = "play";
-
+var gameState = "instructions";
+var start;
 //var rocksound;
 
 function preload() {
   backgroundImg = loadImage("images/bg1.jpg");
+  ins_image= loadImage("images/ins_img.jpg")
   //backgroundImg2 = loadImage("images/bg2.jpg");
 
   //rocksound=loadSound("sounds/rock.wav");
@@ -25,32 +26,51 @@ function setup() {
     engine = Engine.create();
     world = engine.world;
 
-    player1 = new player(300, height - 30, 100, 100)
-    ground = new Ground(600, height, 1200, 5);
+    player1 = new player(300, height - 40, 100, 100)
+    ground = new Ground(600, height,1200,5);
+    start = createSprite(600,180,100,20);
+    start.addImage(ins_image)
+    start.scale=0.3
+    restart = createSprite(400,200,20,20);
+   restart.visible=false;
   
   }
   function draw() {
-  
-    Engine.update(engine);
     background(0);
-    imageMode(CENTER);
-    image(backgroundImg, 600, 200, 1200, 400);
+    Engine.update(engine);
+   
+   if(gameState==="instructions" && mousePressedOver(start)){
+      gameState="play";
+   }
 
-    textSize(30)
-    fill("white")
-    text("LifeTime  " + playerLife, width - 250, 50);
-
+    
     if (gameState === "play") {
+      imageMode(CENTER);
+      image(backgroundImg, 600, 200, 1200, 400);
+
+      textSize(30)
+      fill("white")
+      text("LifeTime  " + playerLife, width - 250, 50);
+      start.visible = false;
+
+
 
     Events.on(engine, 'collisionStart', collision);
 
     playerLife = Math.round(frameCount / 10);
+
 //to spawn praticles
-    if (frameCount % 30 == 0) {
+    if (frameCount % 15 == 0) {
         newParticle();
       }
       for (var i = 0; i < particles.length; i++) {
         particles[i].display();
+        if(particles[i].body.position.y>370){
+          World.remove(world, particles[i].body);
+              particles.splice(i, 1);
+              i--;
+            
+        }
       }
 // to spawn stones
       if (frameCount % 100 == 0) {
@@ -58,27 +78,33 @@ function setup() {
       }
       for (var i = 0; i < stones.length; i++) {
         stones[i].display();
+        if(stones[i].body.position.y>370){
+          World.remove(world, stones[i].body);
+              stones.splice(i, 1);
+              i--;
+        }
       }
     
-    if (player1.body.position.y > 450) {
+    if (player1.body.position.y > 430) {
       gameState = "end";
     }
+    ground.display();
+    player1.display();
   
 }
 else if (gameState === "end") {
-  console.log("gameover");
   textSize(35)
-  fill("yellow");
-  text("SURVIVED FOR:  " + playerLife "points", width - 800, 250);
+  fill("red");
+  text("SURVIVED FOR: " + playerLife + " seconds", width - 800, 250);
 
   textSize(40)
   fill("red");
-  text("Game Over", width - 700, 150);
+  text("GAME OVER", width - 700, 150);
 
 }
-    ground.display();
-    player1.display();
-    
+   drawSprites();
+   
+
   }
 
     function newParticle() {
@@ -110,3 +136,4 @@ else if (gameState === "end") {
       }
       }
     }
+   
